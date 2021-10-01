@@ -2,7 +2,7 @@ import * as React from "react";
 import styled from "@emotion/styled";
 
 import NotificationList from "./components/NotificationList";
-import { KontenAksiDummy } from "./components/dummy";
+import { KontenAksiDummy, ButtonAksiDummy } from "./components/dummy";
 
 const WS_URL = "ws://localhost:3030";
 
@@ -17,6 +17,10 @@ function App() {
   function handleConnectWebsocket() {
     const ws = new WebSocket(WS_URL);
     setWs(ws);
+  }
+
+  function sendMessageWebsocket(content) {
+    ws.send(JSON.stringify(content));
   }
 
   React.useEffect(() => {
@@ -81,7 +85,14 @@ function App() {
         </header>
 
         <main>
-          <KontenAksiDummy />
+          <KontenAksiDummy>
+            <ButtonAksiDummy
+              onClick={() => sendMessageWebsocket("Ini message dari Aksi 1")}
+            >
+              Aksi
+            </ButtonAksiDummy>
+            <ButtonAksiDummy onClick={() => alert("2")}>Aksi</ButtonAksiDummy>
+          </KontenAksiDummy>
         </main>
       </div>
 

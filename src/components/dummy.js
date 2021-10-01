@@ -1,16 +1,6 @@
-import * as React from "react";
 import styled from "@emotion/styled";
 
-function KontenAksiDummy() {
-  return (
-    <Container>
-      <ButtonAksiDummy onClick={() => alert("1")}>Aksi</ButtonAksiDummy>
-      <ButtonAksiDummy onClick={() => alert("2")}>Aksi</ButtonAksiDummy>
-    </Container>
-  );
-}
-
-const Container = styled.div`
+const KontenAksiDummy = styled.div`
   margin: 60px;
 
   display: grid;
@@ -29,4 +19,4 @@ const ButtonAksiDummy = styled.button`
   background-color: #ffffff;
 `;
 
-export { KontenAksiDummy };
+export { KontenAksiDummy, ButtonAksiDummy };
