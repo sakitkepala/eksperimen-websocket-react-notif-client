@@ -24,6 +24,12 @@ function App() {
   }
 
   React.useEffect(() => {
+    setTimeout(() => {
+      setNotifications(messages);
+    }, 800);
+  }, []);
+
+  React.useEffect(() => {
     if (!ws) return;
     function onOpen() {
       console.log("Terkonek dengan server websocket");
@@ -44,10 +50,22 @@ function App() {
   }, [ws]);
 
   React.useEffect(() => {
-    setTimeout(() => {
-      setNotifications(messages);
-    }, 800);
-  }, []);
+    if (!ws) return;
+    function onMessage(ev) {
+      // const message = JSON.parse(ev.data);
+      const message = ev.data;
+      setNotifications((state) => [
+        ...state,
+        {
+          id: state[state.length - 1].id + 1,
+          message,
+          timestamp: new Date().getTime(),
+        },
+      ]);
+    }
+    ws.addEventListener("message", onMessage);
+    return () => ws.removeEventListener("message", onMessage);
+  }, [ws]);
 
   return (
     <AppContainer>
