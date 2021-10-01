@@ -4,11 +4,40 @@ import styled from "@emotion/styled";
 import NotificationList from "./components/NotificationList";
 import { KontenAksiDummy } from "./components/dummy";
 
+const WS_URL = "ws://localhost:3030";
+
 function App() {
-  const [isConnected, setIsConnected] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [isInputUsername, setIsInputUsername] = React.useState(false);
   const [notifications, setNotifications] = React.useState([]);
+
+  const [isConnected, setIsConnected] = React.useState(false);
+  const [ws, setWs] = React.useState(null);
+
+  function handleConnectWebsocket() {
+    const ws = new WebSocket(WS_URL);
+    setWs(ws);
+  }
+
+  React.useEffect(() => {
+    if (!ws) return;
+    function onOpen() {
+      console.log("Terkonek dengan server websocket");
+      setIsConnected(true);
+    }
+    ws.addEventListener("open", onOpen);
+    return () => ws.removeEventListener("open", onOpen);
+  }, [ws]);
+
+  React.useEffect(() => {
+    if (!ws) return;
+    function onClose() {
+      console.log("Close koneksi WS");
+      setIsConnected(false);
+    }
+    ws.addEventListener("close", onClose);
+    return () => ws.removeEventListener("close", onClose);
+  }, [ws]);
 
   React.useEffect(() => {
     setTimeout(() => {
@@ -20,7 +49,9 @@ function App() {
     <AppContainer>
       <div>
         <header className="hud-username">
-          <div>{isConnected ? "Connected" : "Not connected."}</div>
+          <div className={isConnected ? "hud-connected" : "hud-disconnected"}>
+            &bull; {isConnected ? "Connected" : "Not connected."}
+          </div>
           <div>
             {username && !isInputUsername && (
               <span onClick={() => setIsInputUsername(true)}>
@@ -39,9 +70,9 @@ function App() {
                 onSubmit={() => {
                   setIsInputUsername(false);
                   if (username) {
-                    setIsConnected(true);
+                    handleConnectWebsocket();
                   } else {
-                    setIsConnected(false);
+                    ws.close();
                   }
                 }}
               />
@@ -91,6 +122,14 @@ const AppContainer = styled.div`
 
   .hud-username {
     margin: 20px 60px;
+  }
+
+  .hud-connected {
+    color: green;
+  }
+
+  .hud-disconnected {
+    color: gray;
   }
 
   .notifikasi {
